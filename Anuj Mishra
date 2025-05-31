@@ -1,0 +1,72 @@
+import pygame
+import random
+import sys
+
+# Initialize pygame
+pygame.init()
+
+# Screen setup
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Guess the Number!")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+
+# Fonts
+font = pygame.font.SysFont('Arial', 32)
+
+# Game variables
+number_to_guess = random.randint(1, 100)
+attempts = 0
+user_guess = ""
+message = "Guess a number (1-100):"
+
+# Game loop
+running = True
+while running:
+    screen.fill(WHITE)
+    
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                try:
+                    guess = int(user_guess)
+                    attempts += 1
+                    if guess < number_to_guess:
+                        message = "Too low! Try again:"
+                    elif guess > number_to_guess:
+                        message = "Too high! Try again:"
+                    else:
+                        message = f"Correct! You took {attempts} attempts. Press R to restart."
+                except:
+                    message = "Invalid input! Enter a number:"
+                user_guess = ""
+            elif event.key == pygame.K_r and "Correct" in message:
+                number_to_guess = random.randint(1, 100)
+                attempts = 0
+                message = "Guess a number (1-100):"
+            elif event.key == pygame.K_BACKSPACE:
+                user_guess = user_guess[:-1]
+            elif event.unicode.isdigit():
+                user_guess += event.unicode
+    
+    # Render text
+    title = font.render("Guess the Number Game", True, BLUE)
+    prompt = font.render(message, True, BLACK)
+    guess_text = font.render(f"Your guess: {user_guess}", True, BLACK)
+    
+    screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 50))
+    screen.blit(prompt, (WIDTH // 2 - prompt.get_width() // 2, 150))
+    screen.blit(guess_text, (WIDTH // 2 - guess_text.get_width() // 2, 250))
+    
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()
